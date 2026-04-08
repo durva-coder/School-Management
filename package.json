@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "setup-db": "node database/setup.js"
+    "setup-db": "node database/setup.js",
+    "migrate": "node database/migrations/add_unique_school_name.js"
   },
   "keywords": ["school", "management", "api", "express", "mysql"],
   "author": "",

@@ -1,24 +1,34 @@
 const { pool } = require('../database/config');
 const { body, query, validationResult } = require('express-validator');
 
+// Custom validation to check if school name already exists
+const isSchoolNameUnique = async (name) => {
+  const [rows] = await pool.execute('SELECT id FROM schools WHERE name = ?', [name]);
+  if (rows.length > 0) {
+    throw new Error('School name already exists');
+  }
+  return true;
+};
+
 // Validation rules for adding a school
 const addSchoolValidation = [
   body('name')
     .trim()
     .notEmpty().withMessage('School name is required')
     .isString().withMessage('School name must be a string')
-    .isLength({ max: 255 }).withMessage('School name must be less than 255 characters'),
-  
+    .isLength({ max: 255 }).withMessage('School name must be less than 255 characters')
+    .custom(isSchoolNameUnique),
+
   body('address')
     .trim()
     .notEmpty().withMessage('Address is required')
     .isString().withMessage('Address must be a string')
     .isLength({ max: 500 }).withMessage('Address must be less than 500 characters'),
-  
+
   body('latitude')
     .isFloat({ min: -90, max: 90 }).withMessage('Latitude must be a float between -90 and 90')
     .toFloat(),
-  
+
   body('longitude')
     .isFloat({ min: -180, max: 180 }).withMessage('Longitude must be a float between -180 and 180')
     .toFloat()
@@ -62,6 +72,20 @@ const addSchool = async (req, res) => {
 
   } catch (error) {
     console.error('Error adding school:', error.message);
+    
+    // Handle database unique constraint violation
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: [{
+          msg: 'School name already exists',
+          param: 'name',
+          location: 'body'
+        }]
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Internal server error',
