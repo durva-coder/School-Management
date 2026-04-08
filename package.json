@@ -1,0 +1,23 @@
+{
+  "name": "school-management-api",
+  "version": "1.0.0",
+  "description": "Node.js APIs for School Management using Express.js and MySQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup-db": "node database/setup.js"
+  },
+  "keywords": ["school", "management", "api", "express", "mysql"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
+    "dotenv": "^16.3.1",
+    "express-validator": "^7.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

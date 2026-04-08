@@ -1,0 +1,142 @@
+{
+  "info": {
+    "name": "School Management API",
+    "description": "Postman collection for testing School Management APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Add School",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Greenwood High School\",\n  \"address\": \"123 Main Street, Springfield\",\n  \"latitude\": 40.7128,\n  \"longitude\": -74.0060\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/addSchool",
+          "host": ["{{base_url}}"],
+          "path": ["api", "addSchool"]
+        },
+        "description": "Add a new school to the database with name, address, latitude, and longitude."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "status": "Created",
+          "code": 201,
+          "body": "{\n  \"success\": true,\n  \"message\": \"School added successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Greenwood High School\",\n    \"address\": \"123 Main Street, Springfield\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060\n  }\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        {
+          "name": "Validation Error",
+          "status": "Bad Request",
+          "code": 400,
+          "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": [\n    {\n      \"msg\": \"School name is required\",\n      \"param\": \"name\",\n      \"location\": \"body\"\n    }\n  ]\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "List Schools by Proximity",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/listSchools?latitude=40.7128&longitude=-74.0060",
+          "host": ["{{base_url}}"],
+          "path": ["api", "listSchools"],
+          "query": [
+            {
+              "key": "latitude",
+              "value": "40.7128",
+              "description": "User's latitude (required, -90 to 90)"
+            },
+            {
+              "key": "longitude",
+              "value": "-74.0060",
+              "description": "User's longitude (required, -180 to 180)"
+            }
+          ]
+        },
+        "description": "Retrieve all schools sorted by distance from the user's location using Haversine formula."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"success\": true,\n  \"message\": \"Schools retrieved successfully\",\n  \"count\": 3,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Greenwood High School\",\n      \"address\": \"123 Main Street, Springfield\",\n      \"latitude\": 40.7128,\n      \"longitude\": -74.0060,\n      \"distance_km\": 0.00\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Sunrise Academy\",\n      \"address\": \"456 Oak Avenue, Springfield\",\n      \"latitude\": 40.7580,\n      \"longitude\": -73.9855,\n      \"distance_km\": 5.23\n    }\n  ]\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        {
+          "name": "Validation Error",
+          "status": "Bad Request",
+          "code": 400,
+          "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": [\n    {\n      \"msg\": \"Latitude must be a float between -90 and 90\",\n      \"param\": \"latitude\",\n      \"location\": \"query\"\n    }\n  ]\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Check API status and view available endpoints."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"success\": true,\n  \"message\": \"School Management API is running\",\n  \"endpoints\": {\n    \"addSchool\": \"POST /api/addSchool\",\n    \"listSchools\": \"GET /api/listSchools?latitude={lat}&longitude={lon}\"\n  }\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
